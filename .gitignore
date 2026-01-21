@@ -1,0 +1,60 @@
+# ========================
+# Virtual Environment
+# ========================
+venv/
+env/
+.venv/
+
+# ========================
+# Python cache & compiled files
+# ========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ========================
+# Distribution / packaging
+# ========================
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ========================
+# Logs & databases
+# ========================
+*.log
+*.sqlite3
+*.db
+
+# ========================
+# Environment variables
+# ========================
+.env
+
+# ========================
+# IDE / Editor files
+# ========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ========================
+# OS generated files
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# Test / coverage reports
+# ========================
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# ========================
+# Jupyter Notebook checkpoints
+# ========================
+.ipynb_checkpoints/
