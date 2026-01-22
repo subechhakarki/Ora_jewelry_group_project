@@ -8,7 +8,9 @@ from themes.theme import (
 )
 from db.user_queries import get_all_users, delete_user, change_user_role, update_user
 from utils.helpers import SessionManager
-from ui.product_ui import AdminProductCreateScreen
+
+# ✅ CHANGE: import the FULL product management UI (CRUD)
+from ui.product_ui import AdminProductManagementScreen
 
 
 class EditUserDialog(ctk.CTkToplevel):
@@ -24,7 +26,7 @@ class EditUserDialog(ctk.CTkToplevel):
         self.geometry("420x420")
         self.resizable(False, False)
 
-        # Make it modal-ish
+        # modal-ish
         self.transient(parent)
         self.grab_set()
 
@@ -46,7 +48,7 @@ class EditUserDialog(ctk.CTkToplevel):
         self.email_entry.pack(padx=20, pady=(5, 12))
         self.email_entry.insert(0, user["user_email"])
 
-        # Password (optional)
+        # Password optional
         ctk.CTkLabel(container, text="New Password (optional)", **get_label_style("normal")).pack(anchor="w", padx=20)
         self.password_entry = ctk.CTkEntry(container, width=340, show="●", **get_input_style())
         self.password_entry.pack(padx=20, pady=(5, 20))
@@ -101,7 +103,7 @@ class EditUserDialog(ctk.CTkToplevel):
 
 class AdminDashboard:
     """
-    Admin dashboard for Step 6: Manage Users
+    Admin dashboard (Step 6 users + Step 7 products button)
     """
     def __init__(self, parent, on_logout=None):
         self.parent = parent
@@ -131,7 +133,7 @@ class AdminDashboard:
         products_btn = ctk.CTkButton(
             top,
             text="Manage Products",
-            command=self.open_product_create,
+            command=self.open_product_management,
             width=160,
             **get_button_style("primary")
         )
@@ -222,17 +224,23 @@ class AdminDashboard:
         self.btn_refresh.pack(padx=20, pady=(10, 20))
 
     # -----------------------
-    # Step 7 navigation
+    # ✅ PRODUCTS NAVIGATION (Full CRUD screen)
     # -----------------------
-    def open_product_create(self):
+    def open_product_management(self):
+        """
+        Switch from User Management dashboard to Product Management dashboard
+        """
         self.destroy()
-        self.product_create = AdminProductCreateScreen(
+        self.product_manager = AdminProductManagementScreen(
             parent=self.parent,
             on_back=self._back_to_users
         )
 
     def _back_to_users(self):
-        self.product_create.destroy()
+        """
+        Back from product manager -> admin user dashboard
+        """
+        self.product_manager.destroy()
         AdminDashboard(self.parent, on_logout=self.on_logout)
 
     # -----------------------
@@ -297,7 +305,6 @@ class AdminDashboard:
         )
 
         is_default_admin = (user["user_email"].lower() == "admin@ora.com")
-
         self.btn_edit.configure(state="normal")
         self.btn_toggle_role.configure(state="normal")
         self.btn_delete.configure(state="disabled" if is_default_admin else "normal")

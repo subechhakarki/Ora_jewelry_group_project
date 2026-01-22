@@ -8,13 +8,12 @@ after the current button-click event finishes.
 import customtkinter as ctk
 import tkinter.messagebox as messagebox
 
-
-
 from db.database import init_database
-from themes.theme import setup_theme, configure_window, Colors
+from themes.theme import setup_theme, configure_window
 from ui.auth_ui import LoginScreen, RegistrationScreen
 from utils.helpers import SessionManager
 from ui.admin_ui import AdminDashboard
+from ui.product_ui import UserProductBrowseScreen
 
 
 class ORAJewelryApp:
@@ -23,18 +22,16 @@ class ORAJewelryApp:
     """
 
     def __init__(self):
-        # Step 1: Setup the foundation
         print("🚀 Starting ORA Jewelry Store...")
-        init_database()          # Create database tables
-        setup_theme()            # Apply purple & white theme
+        init_database()
+        setup_theme()
 
-        # Step 2: Create the main window
         self.root = ctk.CTk()
         configure_window(self.root, "ORA Jewelry Store")
 
-        # Step 3: Start with the login screen
-        self.show_login_screen()
+        self.current_user = None  # keep user info for navigation
 
+        self.show_login_screen()
         print("✅ App is ready!")
 
     # =========================
@@ -49,44 +46,32 @@ class ORAJewelryApp:
     # SCREEN ROUTING (PUBLIC)
     # =========================
     def show_login_screen(self):
-        """
-        Public: schedule login screen render on next event-loop tick
-        """
         self.root.after(0, self._show_login_screen)
 
     def show_registration_screen(self):
-        """
-        Public: schedule registration screen render on next event-loop tick
-        """
         self.root.after(0, self._show_registration_screen)
 
     # =========================
     # SCREEN ROUTING (INTERNAL)
     # =========================
     def _show_login_screen(self):
-        """
-        Internal: actually render Login Screen
-        """
         print("📺 Switching to: Login Screen")
         self._clear_root()
 
         self.login_screen = LoginScreen(
             parent=self.root,
-            on_success=self.handle_login_success,          # Button: "Login"
-            on_register=self.show_registration_screen      # Button: "Register here"
+            on_success=self.handle_login_success,
+            on_register=self.show_registration_screen
         )
 
     def _show_registration_screen(self):
-        """
-        Internal: actually render Registration Screen
-        """
         print("📺 Switching to: Registration Screen")
         self._clear_root()
 
         self.reg_screen = RegistrationScreen(
             parent=self.root,
-            on_success=self.handle_registration_success,   # Button: "Create Account"
-            on_back=self.show_login_screen                 # Button: "Login here"
+            on_success=self.handle_registration_success,
+            on_back=self.show_login_screen
         )
 
     # =========================
@@ -95,47 +80,38 @@ class ORAJewelryApp:
     def handle_login_success(self, user_data):
         """
         Called when login is successful
-        user_data contains: user_id, user_name, user_email, user_role
+        user_data: user_id, user_name, user_email, user_role
         """
         print(f"✅ Login successful! Welcome {user_data['user_name']}")
 
-        # Save the login session
+        self.current_user = user_data
+
         SessionManager.create_session(user_data)
 
-        # Show welcome message
         messagebox.showinfo(
             "Welcome!",
             f"Login successful!\nWelcome back, {user_data['user_name']}!"
         )
 
-        # Route to the right dashboard based on role
-        if user_data['user_role'] == 'admin':
+        if user_data["user_role"] == "admin":
             self.show_admin_dashboard(user_data)
         else:
             self.show_user_dashboard(user_data)
 
     def handle_registration_success(self):
-        """
-        Called when registration is successful
-        """
         print("✅ Registration successful!")
 
-        # Show success message
         messagebox.showinfo(
             "Success!",
             "Account created successfully!\nYou can now login with your credentials."
         )
 
-        # Go back to login screen safely
         self.show_login_screen()
 
     # =========================
-    # DASHBOARDS (PLACEHOLDERS)
+    # DASHBOARDS
     # =========================
     def show_admin_dashboard(self, user_data):
-        """
-        Step 6: Admin Dashboard - User Management
-        """
         print("👑 Showing Admin Dashboard (User Management)")
         self._clear_root()
 
@@ -144,35 +120,79 @@ class ORAJewelryApp:
             on_logout=self.logout
         )
 
+    def show_user_dashboard(self, user_data):
+        """
+        Simple user dashboard with a Browse Products button (Step 8)
+        """
+        print("👤 Showing User Dashboard")
+        self._clear_root()
+
+        main_frame = ctk.CTkFrame(self.root)
+        main_frame.pack(fill="both", expand=True, padx=30, pady=30)
+
+        title = ctk.CTkLabel(
+            main_frame,
+            text=f"👋 Welcome, {user_data['user_name']}!",
+            font=("Segoe UI", 22, "bold")
+        )
+        title.pack(pady=(0, 20))
+
+        browse_btn = ctk.CTkButton(
+            main_frame,
+            text="💎 Browse Products",
+            command=lambda: self.open_browse_products(user_data),
+            width=260,
+            height=48,
+            corner_radius=999,  # pill
+            fg_color="#8B5CF6",
+            hover_color="#7C3AED",
+            font=("Segoe UI", 14, "bold")
+        )
+        browse_btn.pack(pady=10)
+
+        logout_btn = ctk.CTkButton(
+            main_frame,
+            text="Logout",
+            command=self.logout,
+            width=260,
+            height=45,
+            corner_radius=999,  # pill
+            font=("Segoe UI", 13)
+        )
+        logout_btn.pack(pady=10)
+
+    # =========================
+    # STEP 8: PRODUCT BROWSING
+    # =========================
+    def open_browse_products(self, user_data):
+        """
+        Open product browsing screen for all users (Step 8).
+        """
+        print("🛍️ Opening Product Browse Screen")
+        self._clear_root()
+
+        self.browse_screen = UserProductBrowseScreen(
+            parent=self.root,
+            user_data=user_data,
+            on_back=lambda: self.show_user_dashboard(user_data)
+        )
 
     # =========================
     # LOGOUT
     # =========================
     def logout(self):
-        """
-        Logout the current user
-        """
         print("👋 Logging out...")
 
-        # Clear the session
         SessionManager.clear_session()
+        self.current_user = None
 
-        # Show logout message
         messagebox.showinfo("Logged Out", "You have been logged out successfully.")
-
-        # Go back to login screen safely
         self.show_login_screen()
 
     def run(self):
-        """
-        Start the application
-        """
         self.root.mainloop()
 
 
-# ============================================
-# START THE APPLICATION
-# ============================================
 if __name__ == "__main__":
     print("=" * 50)
     print("ORA JEWELRY STORE - STARTING APPLICATION")
