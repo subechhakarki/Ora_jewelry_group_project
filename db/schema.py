@@ -1,6 +1,6 @@
-# db/schema.py
-
 from db.database import get_connection, close_connection
+
+from utils.security import hash_password
 
 def create_tables():
     """
@@ -10,9 +10,7 @@ def create_tables():
     conn = get_connection()
     cursor = conn.cursor()
     
-    # ============================================
-    # 1. USERS TABLE (UPDATED WITH SALT COLUMN)
-    # ============================================
+#make user table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,9 +23,7 @@ def create_tables():
         )
     ''')
     
-    # ============================================
-    # 2. PRODUCTS TABLE
-    # ============================================
+#make product table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS products (
             product_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,9 +36,7 @@ def create_tables():
         )
     ''')
     
-    # ============================================
-    # 3. CART TABLE
-    # ============================================
+#make cart table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS cart (
             cart_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,9 +50,7 @@ def create_tables():
         )
     ''')
     
-    # ============================================
-    # 4. SALES TABLE (Orders)
-    # ============================================
+#make sales table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS sales (
             sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -74,25 +66,22 @@ def create_tables():
     ''')
     
     conn.commit()
-    print("✅ All tables created successfully!")
+    print("All tables created successfully!")
     
-    # Create default admin user if not exists
+    # make default admin user
     create_default_admin(cursor, conn)
     
     close_connection(conn)
 
 def create_default_admin(cursor, conn):
     """
-    Create a default admin user with hashed password
+    mero default ko lagi DON'T FORGET
     Email: admin@ora.com
     Password: admin123
     """
     cursor.execute("SELECT * FROM users WHERE user_email = ?", ('admin@ora.com',))
     if not cursor.fetchone():
-        # Import security module
-        from utils.security import hash_password
-        
-        # Hash the default password
+        #hashing default admin's password
         hashed_password, salt = hash_password('admin123')
         
         cursor.execute('''
@@ -100,15 +89,11 @@ def create_default_admin(cursor, conn):
             VALUES (?, ?, ?, ?, ?)
         ''', ('Admin', 'admin@ora.com', hashed_password, salt, 'admin'))
         conn.commit()
-        print("✅ Default admin user created!")
-        print("   Email: admin@ora.com")
-        print("   Password: admin123 (hashed)")
+        print("Default admin user created!")
+        print(" Email: admin@ora.com")
+        print("Password: admin123 (hashed)")
 
 def drop_all_tables():
-    """
-    WARNING: This will delete all tables and data!
-    Use only for development/testing.
-    """
     conn = get_connection()
     cursor = conn.cursor()
     
@@ -119,4 +104,4 @@ def drop_all_tables():
     
     conn.commit()
     close_connection(conn)
-    print("⚠️ All tables dropped!")
+    print("All tables dropped!")

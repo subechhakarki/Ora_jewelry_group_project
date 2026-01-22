@@ -1,31 +1,11 @@
-# db/product_queries.py
-"""
-Product CRUD operations for ORA Jewelry Store
-Table: products
-Columns:
-- product_id (PK)
-- product_name (TEXT, NOT NULL)
-- product_price (REAL, NOT NULL, CHECK >= 0)
-- product_quantity (INTEGER, NOT NULL, CHECK >= 0)
-- product_image (TEXT, optional)
-- product_description (TEXT, optional)
-- created_at (TIMESTAMP default)
-"""
 
 import sqlite3
 from db.database import get_connection, close_connection
 
-
-# =========================
-# CREATE
-# =========================
 def create_product(name, price, quantity, image_path=None, description=None):
-    """
-    Create a new product.
-    Returns: (success: bool, message: str, product_id: int|None)
-    """
     if not name or name.strip() == "":
         return False, "Product name is required", None
+
 
     try:
         price = float(price)
@@ -34,6 +14,7 @@ def create_product(name, price, quantity, image_path=None, description=None):
     except ValueError:
         return False, "Price must be a valid number", None
 
+
     try:
         quantity = int(quantity)
         if quantity < 0:
@@ -41,8 +22,10 @@ def create_product(name, price, quantity, image_path=None, description=None):
     except ValueError:
         return False, "Quantity must be a valid integer", None
 
+
     conn = get_connection()
     cursor = conn.cursor()
+
 
     try:
         cursor.execute(
@@ -57,21 +40,18 @@ def create_product(name, price, quantity, image_path=None, description=None):
         close_connection(conn)
         return True, "Product created successfully", product_id
 
+
     except sqlite3.Error as e:
         close_connection(conn)
         return False, f"Database error: {str(e)}", None
 
 
-# =========================
-# READ
-# =========================
+
+#gets it by product id
 def get_product_by_id(product_id):
-    """
-    Get a single product by ID.
-    Returns: product dict or None
-    """
     conn = get_connection()
     cursor = conn.cursor()
+
 
     cursor.execute(
         """
@@ -85,8 +65,10 @@ def get_product_by_id(product_id):
     row = cursor.fetchone()
     close_connection(conn)
 
+
     if not row:
         return None
+
 
     return {
         "product_id": row[0],
@@ -99,13 +81,12 @@ def get_product_by_id(product_id):
     }
 
 
+
+
 def get_all_products():
-    """
-    Get all products (newest first).
-    Returns: list[dict]
-    """
     conn = get_connection()
     cursor = conn.cursor()
+
 
     cursor.execute(
         """
@@ -117,6 +98,7 @@ def get_all_products():
     )
     rows = cursor.fetchall()
     close_connection(conn)
+
 
     products = []
     for row in rows:
@@ -134,17 +116,17 @@ def get_all_products():
     return products
 
 
+
+
 def search_products(query_text):
-    """
-    Search products by name/description (case-insensitive-ish).
-    Returns: list[dict]
-    """
     q = (query_text or "").strip()
     if not q:
         return get_all_products()
 
+
     conn = get_connection()
     cursor = conn.cursor()
+
 
     like = f"%{q}%"
     cursor.execute(
@@ -159,6 +141,7 @@ def search_products(query_text):
     )
     rows = cursor.fetchall()
     close_connection(conn)
+
 
     results = []
     for row in rows:
@@ -176,16 +159,13 @@ def search_products(query_text):
     return results
 
 
-# =========================
-# UPDATE
-# =========================
+
+
+#updating the product 
 def update_product(product_id, name=None, price=None, quantity=None, image_path=None, description=None):
-    """
-    Update product fields (any subset).
-    Returns: (success: bool, message: str)
-    """
     updates = []
     params = []
+
 
     if name is not None:
         name = str(name).strip()
@@ -193,6 +173,7 @@ def update_product(product_id, name=None, price=None, quantity=None, image_path=
             return False, "Product name cannot be empty"
         updates.append("product_name = ?")
         params.append(name)
+
 
     if price is not None:
         try:
@@ -204,6 +185,7 @@ def update_product(product_id, name=None, price=None, quantity=None, image_path=
         updates.append("product_price = ?")
         params.append(price)
 
+
     if quantity is not None:
         try:
             quantity = int(quantity)
@@ -214,22 +196,27 @@ def update_product(product_id, name=None, price=None, quantity=None, image_path=
         updates.append("product_quantity = ?")
         params.append(quantity)
 
+
     if image_path is not None:
-        # allow empty string to clear image if you want
         updates.append("product_image = ?")
         params.append(image_path)
+
 
     if description is not None:
         updates.append("product_description = ?")
         params.append(description)
 
+
     if not updates:
         return False, "No fields to update"
 
+
     params.append(product_id)
+
 
     conn = get_connection()
     cursor = conn.cursor()
+
 
     try:
         cursor.execute(
@@ -238,23 +225,24 @@ def update_product(product_id, name=None, price=None, quantity=None, image_path=
         )
         conn.commit()
 
+
         if cursor.rowcount == 0:
             close_connection(conn)
             return False, "Product not found"
 
+
         close_connection(conn)
         return True, "Product updated successfully"
+
 
     except sqlite3.Error as e:
         close_connection(conn)
         return False, f"Database error: {str(e)}"
 
 
+
+#only update quantity
 def update_stock(product_id, new_quantity):
-    """
-    Update only stock/quantity (admin stock management).
-    Returns: (success: bool, message: str)
-    """
     try:
         new_quantity = int(new_quantity)
         if new_quantity < 0:
@@ -262,8 +250,10 @@ def update_stock(product_id, new_quantity):
     except ValueError:
         return False, "Quantity must be a valid integer"
 
+
     conn = get_connection()
     cursor = conn.cursor()
+
 
     try:
         cursor.execute(
@@ -272,30 +262,33 @@ def update_stock(product_id, new_quantity):
         )
         conn.commit()
 
+
         if cursor.rowcount == 0:
             close_connection(conn)
             return False, "Product not found"
 
+
         close_connection(conn)
         return True, "Stock updated successfully"
+
 
     except sqlite3.Error as e:
         close_connection(conn)
         return False, f"Database error: {str(e)}"
 
 
+
+
 def adjust_stock(product_id, delta):
-    """
-    Adjust stock by delta (+/-). Prevents stock going below 0.
-    Returns: (success: bool, message: str)
-    """
     try:
         delta = int(delta)
     except ValueError:
         return False, "Delta must be an integer"
 
+
     conn = get_connection()
     cursor = conn.cursor()
+
 
     try:
         cursor.execute(
@@ -307,12 +300,15 @@ def adjust_stock(product_id, delta):
             close_connection(conn)
             return False, "Product not found"
 
+
         current_qty = int(row[0])
         new_qty = current_qty + delta
+
 
         if new_qty < 0:
             close_connection(conn)
             return False, "Not enough stock (would go below 0)"
+
 
         cursor.execute(
             "UPDATE products SET product_quantity = ? WHERE product_id = ?",
@@ -322,34 +318,162 @@ def adjust_stock(product_id, delta):
         close_connection(conn)
         return True, f"Stock adjusted successfully (now {new_qty})"
 
+
     except sqlite3.Error as e:
         close_connection(conn)
         return False, f"Database error: {str(e)}"
 
 
-# =========================
-# DELETE
-# =========================
+
+
+#deleting product
 def delete_product(product_id):
-    """
-    Delete a product by ID.
-    NOTE: Your schema uses ON DELETE CASCADE in cart/sales, so related rows will be removed too.
-    Returns: (success: bool, message: str)
-    """
     conn = get_connection()
     cursor = conn.cursor()
+
 
     try:
         cursor.execute("DELETE FROM products WHERE product_id = ?", (product_id,))
         conn.commit()
 
+
         if cursor.rowcount == 0:
             close_connection(conn)
             return False, "Product not found"
 
+
         close_connection(conn)
         return True, "Product deleted successfully"
+
 
     except sqlite3.Error as e:
         close_connection(conn)
         return False, f"Database error: {str(e)}"
+
+
+
+
+def reduce_product_stock(product_id, reduce_by, conn=None):
+    try:
+        reduce_by = int(reduce_by)
+        if reduce_by <= 0:
+            return False, "reduce_by must be > 0"
+    except ValueError:
+        return False, "reduce_by must be an integer"
+
+
+    owns_conn = False
+    if conn is None:
+        conn = get_connection()
+        owns_conn = True
+
+
+    cursor = conn.cursor()
+
+
+    try:
+        cursor.execute(
+            "SELECT product_quantity FROM products WHERE product_id = ?",
+            (product_id,),
+        )
+        row = cursor.fetchone()
+        if not row:
+            if owns_conn:
+                close_connection(conn)
+            return False, "Product not found"
+
+
+        current_qty = int(row[0])
+        if reduce_by > current_qty:
+            if owns_conn:
+                close_connection(conn)
+            return False, f"Not enough stock. Available: {current_qty}"
+
+
+        new_qty = current_qty - reduce_by
+
+
+        cursor.execute(
+            "UPDATE products SET product_quantity = ? WHERE product_id = ?",
+            (new_qty, product_id),
+        )
+
+
+        if cursor.rowcount == 0:
+            if owns_conn:
+                close_connection(conn)
+            return False, "Stock update failed"
+
+
+        if owns_conn:
+            conn.commit()
+            close_connection(conn)
+
+
+        return True, f"Stock reduced successfully (now {new_qty})"
+
+
+    except sqlite3.Error as e:
+        if owns_conn:
+            conn.rollback()
+            close_connection(conn)
+        return False, f"Database error: {str(e)}"
+
+
+
+
+def restock_product(product_id, add_qty, conn=None):
+    try:
+        add_qty = int(add_qty)
+        if add_qty <= 0:
+            return False, "add_qty must be > 0"
+    except ValueError:
+        return False, "add_qty must be an integer"
+
+
+    owns_conn = False
+    if conn is None:
+        conn = get_connection()
+        owns_conn = True
+
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "SELECT product_quantity FROM products WHERE product_id = ?",
+            (product_id,),
+        )
+        row = cursor.fetchone()
+        if not row:
+            if owns_conn:
+                close_connection(conn)
+            return False, "Product not found"
+
+
+        new_qty = int(row[0]) + add_qty
+
+
+        cursor.execute(
+            "UPDATE products SET product_quantity = ? WHERE product_id = ?",
+            (new_qty, product_id),
+        )
+
+
+        if owns_conn:
+            conn.commit()
+            close_connection(conn)
+
+
+        return True, f"Restocked successfully (now {new_qty})"
+
+
+    except sqlite3.Error as e:
+        if owns_conn:
+            conn.rollback()
+            close_connection(conn)
+        return False, f"Database error: {str(e)}"
+
+
+
+
+
