@@ -143,7 +143,6 @@ class RegistrationScreen:
         self.confirm_entry.bind("<Return>", lambda e: self.handle_registration())
    
     def handle_registration(self):
-        """Handle registration button click"""
         # previous error
         self.error_label.configure(text="")
        

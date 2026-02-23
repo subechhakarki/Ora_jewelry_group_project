@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-from db.schema import create_tables
+
 
 # Database file path
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'ora_jewelry.db')
@@ -12,6 +12,7 @@ def get_connection():
     return conn
 
 def init_database():
+    from db.schema import create_tables
     create_tables()
     print("Database started successfully!!!!")
 

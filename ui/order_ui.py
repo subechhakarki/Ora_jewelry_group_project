@@ -24,15 +24,16 @@ except Exception:
 class UserOrderHistoryScreen(ctk.CTkFrame):
 
 
-    def __init__(self, parent, user_id: int, on_back=None):
+    def __init__(self, parent, user_id: int, on_back=None, show_back: bool = True):
         super().__init__(parent, fg_color=Colors.BG_LIGHT, corner_radius=0)
         self.parent = parent
         self.user_id = user_id
         self.on_back = on_back
-
+        self.show_back = show_back
 
         self._build_ui()
         self.refresh()
+
 
 
     def _build_ui(self):
@@ -46,10 +47,12 @@ class UserOrderHistoryScreen(ctk.CTkFrame):
         title.pack(side="left", padx=20, pady=14)
 
 
-        back = ctk.CTkButton(
-            top, text="← Back", command=self._go_back, width=110, **get_button_style("secondary")
-        )
-        back.pack(side="right", padx=20, pady=14)
+        if self.show_back:
+            back = ctk.CTkButton(
+                top, text="← Back", command=self._go_back, width=110, **get_button_style("secondary")
+            )
+            back.pack(side="right", padx=20, pady=14)
+
 
 
         self.status = ctk.CTkLabel(

@@ -87,7 +87,7 @@ class SessionManager:
 
 
 def format_price(price):
-    return f"${price:,.2f}"
+    return f"Rs.{price:,.2f}"
 
 
 def validate_image_file(filename):

@@ -10,6 +10,136 @@ from ui.admin_ui import AdminDashboard
 from ui.product_ui import UserProductBrowseScreen
 from ui.cart_ui import CartScreen
 from ui.order_ui import UserOrderHistoryScreen
+from themes.theme import Colors
+
+
+
+class UserShell(ctk.CTkFrame):
+    def __init__(self, parent, app, user_data):
+        super().__init__(parent, fg_color="#F7F5F2")
+        self.app = app
+        self.user_data = user_data
+        self.current_view = None
+
+        self.pack(fill="both", expand=True)
+
+        # Layout
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+
+        # Sidebar
+        self.sidebar = ctk.CTkFrame(self, fg_color="#FFFFFF", corner_radius=0, width=240)
+        self.sidebar.grid(row=0, column=0, sticky="nsw")
+        self.sidebar.grid_propagate(False)
+
+        # Content area
+        self.content = ctk.CTkFrame(self, fg_color="#F7F5F2", corner_radius=0)
+        self.content.grid(row=0, column=1, sticky="nsew")
+
+        self._build_sidebar()
+        self.show_browse()
+
+    def _clear_content(self):
+        for w in self.content.winfo_children():
+            w.destroy()
+        self.current_view = None
+
+    def _build_sidebar(self):
+        ctk.CTkLabel(
+            self.sidebar,
+            text="💎 ORA Jewelry",
+            font=("Segoe UI", 18, "bold"),
+            text_color="#3B1D6F"
+        ).pack(anchor="w", padx=18, pady=(18, 8))
+
+        ctk.CTkLabel(
+            self.sidebar,
+            text=f"Hi, {self.user_data.get('user_name','User')}",
+            font=("Segoe UI", 12),
+            text_color="#6B6B6B"
+        ).pack(anchor="w", padx=18, pady=(0, 18))
+
+        # Nav buttons
+        nav_btn_style = {
+            "width": 200,
+            "height": 42,
+            "corner_radius": 12,
+            "fg_color": Colors.PRIMARY,          # theme color
+            "hover_color": Colors.PRIMARY_DARK,  # darker hover
+            "text_color": Colors.TEXT_WHITE,
+            "font": ("Segoe UI", 13, "bold")
+        }
+
+        ctk.CTkButton(
+            self.sidebar,
+            text="💎 Browse Products",
+            command=self.show_browse,
+            **nav_btn_style
+        ).pack(pady=6, padx=15)
+
+        ctk.CTkButton(
+            self.sidebar,
+            text="🛒 View Cart",
+            command=self.show_cart,
+            **nav_btn_style
+        ).pack(pady=6, padx=15)
+
+        ctk.CTkButton(
+            self.sidebar,
+            text="📦 My Orders",
+            command=self.show_orders,
+            **nav_btn_style
+        ).pack(pady=6, padx=15)
+
+        ctk.CTkFrame(self.sidebar, fg_color="transparent", height=18).pack()
+
+        ctk.CTkButton(
+            self.sidebar,
+            text="🚪 Logout",
+            command=self.app.logout,
+            width=200,
+            fg_color="#EF4444",
+            hover_color="#DC2626"
+        ).pack(padx=18, pady=(18, 10))
+
+
+        
+    def show_browse(self):
+        self._clear_content()
+        from ui.product_ui import UserProductBrowseScreen
+        self.current_view = UserProductBrowseScreen(
+            parent=self.content,
+            user_data=self.user_data,
+            on_back=None,
+            show_back=False
+        )
+
+
+    def show_cart(self):
+        self._clear_content()
+        from ui.cart_ui import CartScreen
+        self.current_view = CartScreen(
+            parent=self.content,
+            user_id=self.user_data["user_id"],
+            on_back=None,
+            show_back=False
+        )
+        self.current_view.pack(fill="both", expand=True)
+
+    def show_orders(self):
+        self._clear_content()
+        from ui.order_ui import UserOrderHistoryScreen
+        self.current_view = UserOrderHistoryScreen(
+            parent=self.content,
+            user_id=self.user_data["user_id"],
+            on_back=None,
+            show_back=False
+        )
+        self.current_view.pack(fill="both", expand=True)
+
+
+
+
 
 
 class ORAJewelryApp:
@@ -133,74 +263,15 @@ class ORAJewelryApp:
 
 
     def show_user_dashboard(self, user_data):
-        print("Showing User Dashboard")
+        print("USER DASHBOARD: SIDEBAR VERSION LOADED")
         self._clear_root()
 
-
-        main_frame = ctk.CTkFrame(self.root)
-        main_frame.pack(fill="both", expand=True, padx=30, pady=30)
-
-
-        title = ctk.CTkLabel(
-            main_frame,
-            text=f"Welcome!!!",
-            font=("Segoe UI", 22, "bold")
-        )
-        title.pack(pady=(0, 20))
-
-
-        browse_btn = ctk.CTkButton(
-            main_frame,
-            text="💎 Browse Products",
-            command=lambda: self.open_browse_products(user_data),
-            width=260,
-            height=48,
-            corner_radius=999,  
-            fg_color="#8B5CF6",
-            hover_color="#7C3AED",
-            font=("Segoe UI", 14, "bold")
-        )
-        browse_btn.pack(pady=10)
-        cart_btn = ctk.CTkButton(
-            main_frame,
-            text="🛒 View Cart",
-            command=lambda: self.open_cart(user_data),
-            width=260,
-            height=48,
-            corner_radius=999,
-            fg_color="#10B981",  
-            hover_color="#059669",
-            font=("Segoe UI", 14, "bold")
-        )
-        cart_btn.pack(pady=10)
-       
-        orders_btn = ctk.CTkButton(
-            main_frame,
-            text="📦 My Orders",
-            command=lambda: self.open_orders(user_data),
-            width=260,
-            height=48,
-            corner_radius=999,
-            fg_color="#F59E0B",  
-            hover_color="#D97706",
-            font=("Segoe UI", 14, "bold")
-        )
-        orders_btn.pack(pady=10)
-
-
-
-
-        logout_btn = ctk.CTkButton(
-            main_frame,
-            text="🚪Logout",
-            command=self.logout,
-            width=260,
-            height=45,
-            corner_radius=999,  
-            font=("Segoe UI", 13)
-        )
-        logout_btn.pack(pady=10)
-
+        try:
+            self.user_shell = UserShell(self.root, app=self, user_data=user_data)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("UI Error", f"Failed to load sidebar dashboard:\n\n{e}")
 
 
 

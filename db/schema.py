@@ -3,10 +3,6 @@ from db.database import get_connection, close_connection
 from utils.security import hash_password
 
 def create_tables():
-    """
-    Create all database tables for the ORA Jewelry Store.
-    Tables: Users, Products, Cart, Sales
-    """
     conn = get_connection()
     cursor = conn.cursor()
     
