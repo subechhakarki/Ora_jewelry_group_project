@@ -14,7 +14,7 @@ from ui.product_ui import AdminProductManagementScreen
 from ui.order_ui import AdminOrderDashboardScreen
 
 
-
+#this is a class to
 
 class EditUserDialog(ctk.CTkToplevel):
     def __init__(self, parent, user, on_saved=None):
