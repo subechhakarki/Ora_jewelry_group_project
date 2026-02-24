@@ -1,12 +1,6 @@
 
 import sqlite3
 from db.database import get_connection, close_connection
-"""
-Product Queries Module
-
-This module handles all database operations related to product management,
-including create, read, update, delete (CRUD) and stock adjustments.
-"""
 
 def create_product(name, price, quantity, image_path=None, description=None):
     if not name or name.strip() == "":
