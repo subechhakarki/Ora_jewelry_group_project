@@ -181,12 +181,11 @@ class CartScreen(ctk.CTkFrame):
         ctk.CTkLabel(header, text="Product", text_color=Colors.TEXT_SECONDARY, font=(Fonts.FAMILY, Fonts.SMALL)) \
             .grid(row=0, column=0, sticky="w")
         ctk.CTkLabel(header, text="Price", text_color=Colors.TEXT_SECONDARY, font=(Fonts.FAMILY, Fonts.SMALL)) \
-            .grid(row=0, column=1, sticky="e")
+            .grid(row=0, column=1, sticky="w")
         ctk.CTkLabel(header, text="Qty", text_color=Colors.TEXT_SECONDARY, font=(Fonts.FAMILY, Fonts.SMALL)) \
-            .grid(row=0, column=2, sticky="e")
+            .grid(row=0, column=2, sticky="w")
         ctk.CTkLabel(header, text="Total", text_color=Colors.TEXT_SECONDARY, font=(Fonts.FAMILY, Fonts.SMALL)) \
             .grid(row=0, column=3, sticky="e")
-
         self.list_frame = ctk.CTkScrollableFrame(self, fg_color="transparent")
         self.list_frame.pack(fill="both", expand=True, padx=20, pady=(0, 12))
 

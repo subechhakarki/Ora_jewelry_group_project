@@ -333,34 +333,32 @@ class AdminOrderDashboardScreen(ctk.CTkFrame):
         action.grid_columnconfigure(1, weight=0)
         action.grid_columnconfigure(2, weight=0)
 
-
+        #choices for droup-down
         next_map = {
             "on-going": ["delivering", "cancelled"],
             "delivering": ["finished", "cancelled"],
             "finished": [],
             "cancelled": [],
         }
-        choices = next_map.get(current_status, [])
-        status_var = ctk.StringVar(value=choices[0] if choices else current_status)
 
-
-        if not choices:
-            terminal = ctk.CTkLabel(
-                action,
-                text="Status locked (finished/cancelled)",
-                text_color=Colors.TEXT_SECONDARY,
-                font=(Fonts.FAMILY, Fonts.SMALL),
-            )
-            terminal.grid(row=0, column=0, sticky="w")
-            return
-
+        status_var = ctk.StringVar(value=current_status)
 
         status_menu = ctk.CTkOptionMenu(
             action,
             variable=status_var,
-            values=choices,
+            values=[current_status] + next_map.get(current_status, []),
         )
         status_menu.grid(row=0, column=1, sticky="e", padx=(8, 8))
+
+        def _advance_options(selected: str):
+            # After selecting a status, update dropdown to show what we can do next!!
+            nxt = next_map.get(selected, [])
+            if nxt:
+                status_menu.configure(values=nxt)
+            else:
+                status_menu.configure(values=[selected])
+
+        status_menu.configure(command=_advance_options)
 
 
         def _apply():

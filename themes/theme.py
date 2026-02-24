@@ -85,7 +85,7 @@ class Layout:
 def setup_theme():
     ctk.set_appearance_mode("light")
     ctk.set_default_color_theme("blue")
-    print("✅ Theme configured: Luxury Ivory / Royal Purple / Gold")
+    print("Theme configured: Luxury Ivory / Royal Purple / Gold")
 
 
 
