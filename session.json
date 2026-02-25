@@ -1,8 +1,8 @@
 {
-    "user_id": 1,
-    "user_name": "Admin",
-    "user_email": "admin@ora.com",
-    "user_role": "admin",
-    "created_at": "2026-02-24 12:24:46.390658",
-    "expires_at": "2026-02-25 12:24:46.390708"
+    "user_id": 3,
+    "user_name": "user2",
+    "user_email": "user2@ora.com",
+    "user_role": "user",
+    "created_at": "2026-02-25 21:45:44.082606",
+    "expires_at": "2026-02-26 21:45:44.082643"
 }
