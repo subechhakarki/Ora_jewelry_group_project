@@ -23,7 +23,7 @@ class RegistrationScreen:
         self.main_frame = ctk.CTkFrame(self.parent, fg_color=Colors.BG_LIGHT, corner_radius=0)
         self.main_frame.pack(fill="both", expand=True)
        
-        # Center
+        # center 
         center_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         center_frame.place(relx=0.5, rely=0.5, anchor="center")
        
@@ -70,7 +70,7 @@ class RegistrationScreen:
         )
         self.email_entry.pack(padx=Layout.PADDING_LARGE, pady=(5, Layout.PADDING_SMALL))
        
-        # Password
+        #  The Password
         password_label = ctk.CTkLabel(card, text="Password", **get_label_style("normal"))
         password_label.pack(anchor="w", padx=Layout.PADDING_LARGE, pady=(Layout.PADDING_SMALL, 0))
        
@@ -83,7 +83,7 @@ class RegistrationScreen:
         )
         self.password_entry.pack(padx=Layout.PADDING_LARGE, pady=(5, Layout.PADDING_SMALL))
        
-        # Confirm password
+        #  The Confirm password
         confirm_label = ctk.CTkLabel(card, text="Confirm Password", **get_label_style("normal"))
         confirm_label.pack(anchor="w", padx=Layout.PADDING_LARGE, pady=(Layout.PADDING_SMALL, 0))
        
@@ -139,7 +139,7 @@ class RegistrationScreen:
         )
         login_btn.pack(side="left")
        
-        #enter key use
+        # enter key use
         self.confirm_entry.bind("<Return>", lambda e: self.handle_registration())
    
     def handle_registration(self):
