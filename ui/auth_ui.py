@@ -19,7 +19,7 @@ class RegistrationScreen:
    
     def create_ui(self):
      
-        #Mainr
+        #Main
         self.main_frame = ctk.CTkFrame(self.parent, fg_color=Colors.BG_LIGHT, corner_radius=0)
         self.main_frame.pack(fill="both", expand=True)
        
@@ -70,7 +70,7 @@ class RegistrationScreen:
         )
         self.email_entry.pack(padx=Layout.PADDING_LARGE, pady=(5, Layout.PADDING_SMALL))
        
-        #  The Password
+        # Password
         password_label = ctk.CTkLabel(card, text="Password", **get_label_style("normal"))
         password_label.pack(anchor="w", padx=Layout.PADDING_LARGE, pady=(Layout.PADDING_SMALL, 0))
        
@@ -83,7 +83,7 @@ class RegistrationScreen:
         )
         self.password_entry.pack(padx=Layout.PADDING_LARGE, pady=(5, Layout.PADDING_SMALL))
        
-        #  The Confirm password
+        # Confirm password
         confirm_label = ctk.CTkLabel(card, text="Confirm Password", **get_label_style("normal"))
         confirm_label.pack(anchor="w", padx=Layout.PADDING_LARGE, pady=(Layout.PADDING_SMALL, 0))
        
