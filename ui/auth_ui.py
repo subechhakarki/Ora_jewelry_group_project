@@ -19,11 +19,11 @@ class RegistrationScreen:
    
     def create_ui(self):
      
-        #Mainr
+        #Main
         self.main_frame = ctk.CTkFrame(self.parent, fg_color=Colors.BG_LIGHT, corner_radius=0)
         self.main_frame.pack(fill="both", expand=True)
        
-        # Center
+        # center 
         center_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         center_frame.place(relx=0.5, rely=0.5, anchor="center")
        
@@ -139,7 +139,7 @@ class RegistrationScreen:
         )
         login_btn.pack(side="left")
        
-        #enter key use
+        # enter key use
         self.confirm_entry.bind("<Return>", lambda e: self.handle_registration())
    
     def handle_registration(self):
