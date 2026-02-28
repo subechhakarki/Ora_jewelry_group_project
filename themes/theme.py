@@ -1,7 +1,5 @@
 import customtkinter as ctk
-
-#The color class 
-
+ 
 class Colors:
     PRIMARY = "#3B1D6F"        
     PRIMARY_DARK = "#2A124F"  
