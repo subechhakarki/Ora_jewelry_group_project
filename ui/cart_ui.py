@@ -39,7 +39,7 @@ def _load_thumb(db_path: str | None):
     except Exception:
         return None
 
-
+    #the is user cart to 
 class AddToCartDialog(ctk.CTkToplevel):
     def __init__(self, parent, user_id: int, product: dict, on_added=None):
         super().__init__(parent)
