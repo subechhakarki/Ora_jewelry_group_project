@@ -83,7 +83,7 @@ class RegistrationScreen:
         )
         self.password_entry.pack(padx=Layout.PADDING_LARGE, pady=(5, Layout.PADDING_SMALL))
        
-        # Confirm password
+        #  The Confirm password
         confirm_label = ctk.CTkLabel(card, text="Confirm Password", **get_label_style("normal"))
         confirm_label.pack(anchor="w", padx=Layout.PADDING_LARGE, pady=(Layout.PADDING_SMALL, 0))
        
@@ -96,7 +96,7 @@ class RegistrationScreen:
         )
         self.confirm_entry.pack(padx=Layout.PADDING_LARGE, pady=(5, Layout.PADDING_MEDIUM))
        
-        # Error message
+        # The Error message
         self.error_label = ctk.CTkLabel(
             card,
             text="",
@@ -105,7 +105,7 @@ class RegistrationScreen:
         )
         self.error_label.pack(pady=(0, Layout.PADDING_SMALL))
        
-        # Register button
+        #  The Register button
         register_btn = ctk.CTkButton(
             card,
             text="Create Account",
@@ -115,7 +115,7 @@ class RegistrationScreen:
         )
         register_btn.pack(padx=Layout.PADDING_LARGE, pady=(Layout.PADDING_SMALL, Layout.PADDING_MEDIUM))
        
-        # Back to login
+        # The Back to login
         login_frame = ctk.CTkFrame(card, fg_color="transparent")
         login_frame.pack(pady=(0, Layout.PADDING_LARGE))
        

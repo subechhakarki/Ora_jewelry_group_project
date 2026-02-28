@@ -38,7 +38,7 @@ class Colors:
 
 
 
-
+#Font class
 class Fonts:
     FAMILY = "Segoe UI"
     FAMILY_BOLD = "Segoe UI Semibold"
@@ -53,7 +53,7 @@ class Fonts:
 
 
 
-
+#layout class
 class Layout:
     PADDING_SMALL = 10
     PADDING_MEDIUM = 20
