@@ -841,7 +841,7 @@ class UserProductBrowseScreen:
 
         for product in self.products:
             card = self._build_product_card(self.grid_scroll, product)
-            card.grid(row=row, column=col, padx=self.GAP_X, pady=self.GAP_Y, sticky="n")
+            card.grid(row=row, column=col, padx=self.GAP_X, pady=self.GAP_Y, sticky="nsew")
 
             col += 1
             if col >= cols:

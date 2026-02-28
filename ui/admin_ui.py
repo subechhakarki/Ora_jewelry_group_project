@@ -149,7 +149,7 @@ class AdminDashboard:
 
         title = ctk.CTkLabel(
             left_top,
-            text="👑 Admin Dashboard",
+            text="Admin Dashboard",
             **get_label_style("heading")
         )
         title.pack(anchor="w")
@@ -204,7 +204,7 @@ class AdminDashboard:
             parent=quick,
             col=1,
             title="🛍️ Manage Products",
-            desc="CRUD products, update stock, delete listings",
+            desc="Edit products, update stock, delete listings",
             btn_text="Open",
             btn_style="primary",
             command=self.open_product_management
