@@ -23,7 +23,7 @@ def test_registration():
     
     def on_back():
         print("🔙 Back button clicked")
-    
+     # this is user registration to
     # Create registration screen
     reg_screen = RegistrationScreen(root, on_success=on_success, on_back=on_back)
     
