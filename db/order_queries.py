@@ -21,9 +21,13 @@ def _get_conn():
 
 
 def create_orders_from_cart(user_id: int) -> Tuple[bool, str, int]:
+
     conn = _get_conn()
     try:
         cur = conn.cursor()
+
+
+        # get cart items with products price and stock
         cur.execute(
             """
             SELECT
@@ -39,20 +43,33 @@ def create_orders_from_cart(user_id: int) -> Tuple[bool, str, int]:
             (user_id,),
         )
         items = cur.fetchall()
+
+
         if not items:
             return False, "Cart is empty.", 0
+
+
+        # check stock for all items first
         for it in items:
             stock = int(it["stock_quantity"])
             qty = int(it["cart_quantity"])
             if qty > stock:
                 return False, f"Not enough stock for '{it['product_name']}'. Available: {stock}", 0
 
+
+        # make sales rows and reduce stock
+    
         created = 0
+
+
         for it in items:
             product_id = int(it["product_id"])
             qty = int(it["cart_quantity"])
             price = float(it["product_price"])
             total_price = qty * price
+
+
+            # insert things into sales
             cur.execute(
                 """
                 INSERT INTO sales (user_id, product_id, sale_quantity, total_price, order_status)
@@ -60,16 +77,21 @@ def create_orders_from_cart(user_id: int) -> Tuple[bool, str, int]:
                 """,
                 (user_id, product_id, qty, total_price, "on-going"),
             )
+
+
+            # reduce stock
             ok, msg = reduce_product_stock(product_id, qty, conn=conn)
             if not ok:
                 raise Exception(msg)
+
+
             created += 1
 
-        # clear the cart after successful checkout
-        cur.execute("DELETE FROM cart WHERE user_id = ?", (user_id,))  # ❌ BUG: missing conn.commit() before this, so if this line raises, the sales inserts above could still get rolled back unexpectedly
 
         conn.commit()
         return True, f"Checkout complete. Created {created} order(s).", created
+
+
     except Exception as e:
         conn.rollback()
         return False, f"Checkout failed: {e}", 0
@@ -307,8 +329,3 @@ def cancel_order(sale_id: int) -> Tuple[bool, str, Dict]:
         return False, f"Cancel failed: {e}", {}
     finally:
         conn.close()
-
-
-
-
-

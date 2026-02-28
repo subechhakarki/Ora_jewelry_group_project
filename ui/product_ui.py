@@ -1,4 +1,3 @@
-
 import customtkinter as ctk
 import tkinter.messagebox as messagebox
 from tkinter import filedialog
@@ -952,7 +951,7 @@ class UserProductBrowseScreen:
         else:
             ctk.CTkFrame(content, fg_color="transparent", height=8).pack(fill="x")
 
-        # buttons row (compact)
+        
         btn_row = ctk.CTkFrame(content, fg_color="transparent")
         btn_row.pack(fill="x", side="bottom")
         btn_row.grid_columnconfigure(0, weight=1)
